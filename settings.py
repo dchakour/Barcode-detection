@@ -26,7 +26,7 @@ class Settings:
         "final_weights": "data/model/yolov3_train_final.tf",
         "checkpoints": "checkpoints/yolov3_train_{epoch}.tf",
         "logs": "logs/",
-        "run_eagerly": False # Set to True for debugging
+        "run_eagerly": True # Set to True for debugging
     }
     
     class_names = ["Barcode"]
