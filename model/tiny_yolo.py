@@ -84,13 +84,12 @@ class TinyYolo:
         callbacks = [
             ReduceLROnPlateau(patience=3, verbose=1),
             EarlyStopping(patience=10, verbose=1),
-            ModelCheckpoint(checkpoints, verbose=1,
-                            save_weights_only=True, save_best_only=True),
+            ModelCheckpoint(checkpoints, verbose=1, save_weights_only=True),
             TensorBoard(log_dir=logs)
         ]
         history = model.fit(train_dataset, epochs=epochs,
                     callbacks=callbacks, validation_data=val_dataset)
-        model.save_weights(final_weights)
+        #model.save_weights(final_weights)
     
     def predict(self, image):
         class_names = Settings.class_names
