@@ -19,7 +19,7 @@ class Settings:
         "learning_rate":        1e-3,
         "epochs":               100,
         "weights_num_classes":  80, #Transfer learning with a different nb classes
-        "train_dataset": "data/train.tf_record",
+        "train_dataset": "data/all.tf_record",
         "val_dataset": "data/validation.tf_record",
         "classes": "data/classes.csv",
         "pretrained_weights": "checkpoints/yolov3-tiny.tf",
