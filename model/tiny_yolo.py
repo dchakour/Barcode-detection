@@ -11,6 +11,7 @@ from tensorflow.keras.callbacks import (ReduceLROnPlateau,
                                         ModelCheckpoint,
                                         TensorBoard)
 from PIL import Image
+from io import BytesIO
 from tensorflow.keras.preprocessing.image import img_to_array
 from absl import logging
 
@@ -23,8 +24,7 @@ class TinyYolo:
         self.__dict__.update(Settings.model) # Default settings
         self.__dict__.update(kwargs) # Overrides
 
-    @property
-    def model(self):
+    def _gen_model(self):
         args = ["size", "channels", "anchors", "masks", "classes",
                 "score_threshold", "iou_threshold", "max_boxes", "training"]
         model = YoloV3Tiny(**{arg:getattr(self, arg) for arg in args})
@@ -34,7 +34,7 @@ class TinyYolo:
 
     def train(self):
         self.training = True
-        model = self.model
+        model = self._gen_model()
 
         # Retrieve train params
         train_dataset_dir  = Settings.train["train_dataset"]
@@ -70,11 +70,11 @@ class TinyYolo:
                         self.masks, self.size)))
 
         # Pretrained weights (80 classes default pretrained classes)
-        model_pretrained = TinyYolo(training=True, classes=80)
-        model_pretrained.model.load_weights(pretrained_weights)
-        self.model.get_layer('yolo_darknet').set_weights(
-            model_pretrained.model.get_layer('yolo_darknet').get_weights())
-        freeze_all(self.model.get_layer('yolo_darknet'))
+        model_pretrained = TinyYolo(training=True, classes=80)._gen_model()
+        model_pretrained.load_weights(pretrained_weights)
+        model.get_layer('yolo_darknet').set_weights(
+            model_pretrained.get_layer('yolo_darknet').get_weights())
+        freeze_all(model.get_layer('yolo_darknet'))
 
         # Train
         optimizer = tf.keras.optimizers.Adam(lr=learning_rate)
@@ -94,11 +94,15 @@ class TinyYolo:
     
     def predict(self, image):
         class_names = Settings.class_names
+        model = self._gen_model()
         img_raw = Image.open(image)
+        buf = BytesIO()
+        img_raw.save(buf, "JPEG", quality=50, optimize=True)
+        img_raw = Image.open(buf)
         img = img_to_array(img_raw)
         img = tf.expand_dims(img, 0)
         img = transform_images(img, 416)
-        boxes, scores, classes, nums = self.model(img)
+        boxes, scores, classes, nums = model(img)
         for i in range(nums[0]):
             logging.info(
                 f'\t{np.array(scores[0][i])}, {np.array(boxes[0][i])}')
