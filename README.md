@@ -10,7 +10,7 @@ Here are the 4 steps for this project :
 The final model can be tested in a streamlit app, by uploading an image and getting the resulting image with a bounding box over the barcode.
 
 ## Installation
-1. Install python 3.8+.
+1. Install python 3.6+.
 
 2. Install zbar for Mac/Linux:
 
@@ -28,7 +28,12 @@ The final model can be tested in a streamlit app, by uploading an image and gett
 
     The zbar DLLs are included with the Windows Python wheels.
 
-3. Install the requirements
+3. Clone this repository
+    ```
+    git clone <url>
+    ```
+
+4. Install the requirements
     ```
     pip install -r requirements.txt
     ```
@@ -51,3 +56,8 @@ The app can be started like follows :
 5. If the OpenFoodFacts API contains information about the product, it will appear in the product info section.
 
 ## Training
+TBD
+
+## References
+
+Keras implementation of Tiny Yolo v3 : https://github.com/zzh8829/yolov3-tf2
